@@ -58,6 +58,13 @@ _TERMINAL_WM_CLASSES = {
     "dev.warp.warp",
 }
 
+# Emacs binds Ctrl+V to scroll-down (scroll-up); its paste is Ctrl+Y ("yank").
+# Some GUI builds report "emacs-gtk" rather than "emacs" as their WM_CLASS.
+_EMACS_WM_CLASSES = {
+    "emacs",
+    "emacs-gtk",
+}
+
 
 class PasteHelper:
     """Copy text to clipboard and simulate paste keystroke."""
@@ -318,8 +325,15 @@ class PasteHelper:
     def _paste_chord() -> tuple[str, bool]:
         """Return the paste chord for the focused window as ``(letter, use_shift)``.
 
-        Terminals swallow Ctrl+V (their paste is Ctrl+Shift+V); everything
-        else uses Ctrl+V.
+        Terminals swallow Ctrl+V (their paste is Ctrl+Shift+V); Emacs binds
+        Ctrl+V to scroll-down and pastes with Ctrl+Y (yank); everything else
+        uses Ctrl+V.
+
+        The Emacs entry is a best-effort default rather than a guarantee: CUA
+        mode also pastes with Ctrl+Y, but evil-mode users paste through ``"+p``,
+        which no synthetic chord can express, and a nil
+        ``select-enable-clipboard`` makes yank read the kill ring instead of the
+        system clipboard.
         """
         wm_classes = PasteHelper._focused_window_classes()
         if not wm_classes:
@@ -332,6 +346,9 @@ class PasteHelper:
         if candidates & _TERMINAL_WM_CLASSES:
             chord = "ctrl+shift+v"
             result = "v", True
+        elif candidates & _EMACS_WM_CLASSES:
+            chord = "ctrl+y"
+            result = "y", False
         else:
             chord = "ctrl+v"
             result = "v", False

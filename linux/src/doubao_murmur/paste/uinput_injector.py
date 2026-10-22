@@ -32,10 +32,11 @@ SYN_REPORT = 0
 KEY_LEFTCTRL = 29
 KEY_LEFTSHIFT = 42
 KEY_V = 47
+KEY_Y = 21
 
 # Map a paste chord's letter to its Linux input keycode. Shared with the
 # ydotool backend in paste_helper, which uses the same keycodes.
-LETTER_KEYCODES = {"v": KEY_V}
+LETTER_KEYCODES = {"v": KEY_V, "y": KEY_Y}
 
 # uinput ioctls (linux/uinput.h)
 UI_SET_EVBIT = 0x40045564

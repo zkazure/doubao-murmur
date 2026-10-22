@@ -221,6 +221,13 @@ class TestPasteChord:
     def test_konsole_is_terminal(self):
         assert self._run_chord(b"konsole\n") == ("v", True)
 
+    def test_emacs_uses_ctrl_y(self):
+        assert self._run_chord(b"emacs\n") == ("y", False)
+
+    def test_emacs_gtk_uses_ctrl_y(self):
+        # Some GUI builds report "emacs-gtk" as their WM_CLASS.
+        assert self._run_chord(b"emacs-gtk\n") == ("y", False)
+
     def test_browser_is_not_terminal(self):
         assert self._run_chord(b"google-chrome\n") == ("v", False)
 
